@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Pie Chart with D3.js</title>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <style>
+        /* Add basic styles for the chart */
+        #my_dataviz {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="my_dataviz"></div>
+
+    <script>
+        // Set dimensions and margins of the graph
+        var width = 450, height = 450, margin = 40;
+        var radius = Math.min(width, height) / 2 - margin;
+
+        // Append SVG object to the div
+        var svg = d3.select("#my_dataviz")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        async function fetchDataAndCreateChart() {
+            try {
+                // Fetch data from the API
+                const response = await fetch('http://127.0.0.1:5000/get_news_sentiments');
+                const data = await response.json();
+                console.log(data);
+
+                // Convert data object to array format for d3 pie chart
+                const data_ready = Object.entries(data);
+
+                // Set color scale
+                var color = d3.scaleOrdinal()
+                    .domain(data_ready.map(d => d[0])) // Use sentiment labels
+                    .range(["#98abc5", "#8a89a6", "#7b6888"]);
+
+                // Compute position for each group on the pie
+                var pie = d3.pie().value(d => d[1]);
+
+                // Define arc for the pie segments
+                var arc = d3.arc()
+                    .innerRadius(0)
+                    .outerRadius(radius);
+
+                // Build the pie chart
+                svg
+                    .selectAll('path')
+                    .data(pie(data_ready))
+                    .enter()
+                    .append('path')
+                    .attr('d', arc)
+                    .attr('fill', d => color(d.data[0])) // Color by sentiment key
+                    .attr("stroke", "black")
+                    .style("stroke-width", "2px")
+                    .style("opacity", 0.7);
+
+                console.log("Success")
+                    
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Error fetching data.');
+            }
+        }
+
+        // Call the function to fetch data and create the chart
+        fetchDataAndCreateChart();
+    </script>
+</body>
+</html>

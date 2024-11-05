@@ -1,0 +1,9 @@
+Flask
+flask-cors
+pandas
+numpy
+nltk
+matplotlib
+requests
+newsapi-python
+deep-translator
