@@ -8,10 +8,8 @@ import matplotlib.pyplot as plt
 import requests
 import json
 from newsapi import NewsApiClient
-from deep_translator import GoogleTranslator
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from nltk.stem import PorterStemmer
 import re
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from collections import Counter
@@ -21,8 +19,8 @@ app = Flask(__name__)
 CORS(app)
 
 def get_articles():
-    newsapi = NewsApiClient(api_key="bc95681e56644c11912d47c3dfef490a")  # Make sure your API key is valid
-    results = newsapi.get_everything(q="mpox")
+    newsapi = NewsApiClient(api_key="bc95681e56644c11912d47c3dfef490a") 
+    results = newsapi.get_everything(q="mpox", language='en')
     
     # Debug: Check the API response
     print(json.dumps(results, indent=2))
@@ -50,14 +48,21 @@ def get_articles():
     print(df.head())  # Print the DataFrame for debugging
 
     # Translate titles and preprocess
-    df["translated_title"] = df["title"].apply(lambda x: GoogleTranslator(source="auto", target="en").translate(x))
+    # df["translated_title"] = df["title"].apply(lambda x: GoogleTranslator(source="auto", target="en").translate(x))
+    # print("Success")
     stop_words = set(stopwords.words("english"))
-    stemmer = PorterStemmer()
+
 
     def preprocess(text):
-        text = " ".join([stemmer.stem(w.lower()) for w in word_tokenize(re.sub('[^a-zA-Z]+', ' ', text.replace("<br />", ""))) if not w in stop_words])
+        text = " ".join([
+        w.lower()  # Lowercase each word
+        for w in word_tokenize(
+            re.sub('[^a-zA-Z]+', ' ', text.replace("<br />", ""))
+        )
+        if w.lower() not in stop_words  # Remove stop words
+    ])
         return text
-    df["title_clean"] = df.apply(lambda x: preprocess(x["translated_title"]), axis = 1)
+    df["title_clean"] = df.apply(lambda x: preprocess(x["title"]), axis = 1)
     return df
 
 
@@ -89,7 +94,7 @@ def get_news_sentiments(df):
 def get_word_counts(df):
     all_words =[]
     for index, row in df.iterrows():  # Using iterrows to iterate over DataFrame rows
-        words = word_tokenize(row['translated_title'].lower())  # Convert to lower case
+        words = word_tokenize(row['title_clean'].lower())  # Convert to lower case
         all_words.extend(words)
     stop_words = set(stopwords.words("english"))
     filtered_words = [word for word in all_words if word.isalnum() and word not in stop_words]
