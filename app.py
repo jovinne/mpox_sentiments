@@ -16,7 +16,7 @@ from collections import Counter
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*")
 
 def get_articles():
     newsapi = NewsApiClient(api_key="bc95681e56644c11912d47c3dfef490a") 
