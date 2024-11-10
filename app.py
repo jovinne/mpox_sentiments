@@ -122,5 +122,9 @@ def generate_and_get_word_counts():
     word_counts = get_word_counts(articles)
     return jsonify(word_counts)
 
+@app.route('/')
+def index():
+    return "Hello, World!"
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
