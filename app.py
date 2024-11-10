@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS 
+from flask import render_template
 import csv
 import pandas as pd
 import numpy as np
@@ -125,6 +126,14 @@ def generate_and_get_word_counts():
 @app.route('/')
 def index():
     return "Hello, World!"
+
+@app.route('/wordcloud')
+def wordcloud():
+    return render_template('wordcloud.html')
+
+@app.route('/piechart')
+def piechart():
+    return render_template('piechart.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
