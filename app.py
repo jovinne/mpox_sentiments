@@ -9,19 +9,19 @@ import matplotlib.pyplot as plt
 import requests
 import json
 from newsapi import NewsApiClient
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 import re
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from collections import Counter
 
-
-app = Flask(__name__)
-CORS(app, origins="*")
-
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('vader_lexicon')
+
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+app = Flask(__name__)
+CORS(app, origins="*")
 
 def get_articles():
     newsapi = NewsApiClient(api_key="bc95681e56644c11912d47c3dfef490a") 
