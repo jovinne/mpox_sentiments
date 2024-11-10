@@ -51,6 +51,7 @@ def get_articles():
     # Translate titles and preprocess
     # df["translated_title"] = df["title"].apply(lambda x: GoogleTranslator(source="auto", target="en").translate(x))
     # print("Success")
+    nltk.download('stopwords')
     stop_words = set(stopwords.words("english"))
 
 
