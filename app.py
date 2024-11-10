@@ -19,6 +19,10 @@ from collections import Counter
 app = Flask(__name__)
 CORS(app, origins="*")
 
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('vader_lexicon')
+
 def get_articles():
     newsapi = NewsApiClient(api_key="bc95681e56644c11912d47c3dfef490a") 
     results = newsapi.get_everything(q="mpox", language='en')
@@ -51,7 +55,6 @@ def get_articles():
     # Translate titles and preprocess
     # df["translated_title"] = df["title"].apply(lambda x: GoogleTranslator(source="auto", target="en").translate(x))
     # print("Success")
-    nltk.download('stopwords')
     stop_words = set(stopwords.words("english"))
 
 
