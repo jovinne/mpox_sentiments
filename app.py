@@ -20,7 +20,7 @@ import os
 nltk.data.path.append(os.path.join(os.path.dirname(__file__), 'nltk_data'))
 
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
+# from nltk.tokenize import word_tokenize
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 app = Flask(__name__)
@@ -62,14 +62,19 @@ def get_articles():
 
 
     def preprocess(text):
-        text = " ".join([
-        w.lower()  # Lowercase each word
-        for w in word_tokenize(
-            re.sub('[^a-zA-Z]+', ' ', text.replace("<br />", ""))
-        )
-        if w.lower() not in stop_words  # Remove stop words
-    ])
-        return text
+        text = re.sub(r'[^a-zA-Z\s]', '', text)  # Keep only alphabetic characters and spaces
+    
+        # Split the text into words
+        words = text.lower().split()  # Split by spaces and convert to lowercase
+        
+        # Remove stopwords from the text
+        cleaned_words = [word for word in words if word not in stop_words]
+        
+        # Join the words back into a string
+        cleaned_text = " ".join(cleaned_words)
+        
+        return cleaned_text
+    
     df["title_clean"] = df.apply(lambda x: preprocess(x["title"]), axis = 1)
     return df
 
@@ -102,7 +107,10 @@ def get_news_sentiments(df):
 def get_word_counts(df):
     all_words =[]
     for index, row in df.iterrows():  # Using iterrows to iterate over DataFrame rows
-        words = word_tokenize(row['title_clean'].lower())  # Convert to lower case
+        text = re.sub(r'[^a-zA-Z\s]', '', row['title_clean'].lower())  # Remove non-alphabetical characters
+        words = text.split()  # Split by spaces into words
+
+        # Add the words to the all_words list
         all_words.extend(words)
     stop_words = set(stopwords.words("english"))
     filtered_words = [word for word in all_words if word.isalnum() and word not in stop_words]
