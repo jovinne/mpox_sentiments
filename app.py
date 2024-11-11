@@ -10,15 +10,17 @@ import requests
 import json
 from newsapi import NewsApiClient
 import re
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from collections import Counter
 
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('vader_lexicon')
+# nltk.download('stopwords', download_dir='./nltk_data')
+# nltk.download('punkt', download_dir='./nltk_data')
+# nltk.download('vader_lexicon', download_dir='./nltk_data')
+
+nltk.data.path.append('./nltk_data')
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 app = Flask(__name__)
 CORS(app, origins="*")
